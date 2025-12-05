@@ -29,6 +29,7 @@ enum TowerClass { dps, tank, support, control, hybrid }
 // Enemy Types
 enum EnemyType { book, laptop, exam, bee, miniboss }
 
+
 class TowerInstance {
   TowerType type;
   int evolutionLevel;
@@ -151,6 +152,9 @@ class EnemyDefinition {
     this.flying = false,
   });
 }
+const double kEnemySpeedFactor = 0.65;   // < 1.0 = slower
+const double kEnemyGoldFactor  = 1.7;    // > 1.0 = more gold
+
 
 const Map<EnemyType, EnemyDefinition> enemyDefs = {
   EnemyType.book: EnemyDefinition(
@@ -166,7 +170,7 @@ const Map<EnemyType, EnemyDefinition> enemyDefs = {
     bounty: 18,
   ),
   EnemyType.exam: EnemyDefinition(
-    sprite: 'assets/game/enemies/julie.png',
+    sprite: 'assets/game/enemies/arcell.png',
     baseHp: 40,
     speed: 140,
     bounty: 15,
@@ -183,7 +187,7 @@ const Map<EnemyType, EnemyDefinition> enemyDefs = {
 /// Miniboss definitions (professors)
 const Map<String, EnemyDefinition> minibossDefs = {
   "caballar": EnemyDefinition(
-    sprite: 'assets/game/enemies/arcell.png',
+    sprite: 'assets/game/enemies/sean.png',
     baseHp: 800,
     speed: 50,
     bounty: 200,
@@ -195,7 +199,7 @@ const Map<String, EnemyDefinition> minibossDefs = {
     bounty: 160,
   ),
   "lontoc": EnemyDefinition(
-    sprite: 'assets/game/enemies/sean.png',
+    sprite: 'assets/game/enemies/paola.png',
     baseHp: 900,
     speed: 40,
     bounty: 250,
@@ -231,7 +235,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.dps,
       maxHp: 90,
       range: 480,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/abante.png',
       weaponPath: 'assets/game/weapons/dual_pistols.png',
       weaponScale: 1.0,
       abilities: [
@@ -263,7 +267,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.hybrid,
       maxHp: 110,
       range: 460,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/chan.png',
       weaponPath: 'assets/game/weapons/ink_pen.png',
       weaponScale: 1.0,
       abilities: [
@@ -288,7 +292,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.control,
       maxHp: 100,
       range: 500,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/domingo.png',
       weaponPath: 'assets/game/weapons/notebook_laser.png',
       weaponScale: 1.1,
       abilities: [
@@ -304,7 +308,7 @@ List<TowerType> buildTowerTypes() {
     ),
 
     TowerType(
-      id: 'clarinze',
+      id: 'perez',
       name: 'Perez, Clarinze',
       description: 'Competitive prodigy. High DPS crit-style tower.',
       cost: 140,
@@ -327,7 +331,7 @@ List<TowerType> buildTowerTypes() {
         ),
         TowerAbility(
           id: 'clarinze_comp',
-          name: '“Kaya ko ’to.” Mode',
+          name: 'Late Arrival',
           description:
               'Damage increases slightly each time she kills an enemy.',
           baseValue: 0.06,
@@ -354,7 +358,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.control,
       maxHp: 110,
       range: 470,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/peruda.png',
       weaponPath: 'assets/game/weapons/stopwatch.png',
       weaponScale: 1.1,
       abilities: [
@@ -386,7 +390,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.support,
       maxHp: 130,
       range: 450,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/puro.png',
       weaponPath: 'assets/game/weapons/calculator.png',
       weaponScale: 1.0,
       abilities: [
@@ -412,7 +416,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.control,
       maxHp: 105,
       range: 460,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/yahiya.png',
       weaponPath: 'assets/game/weapons/mic_shock.png',
       weaponScale: 1.1,
       abilities: [
@@ -444,7 +448,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.support,
       maxHp: 130,
       range: 440,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/mapanao.png',
       weaponPath: 'assets/game/weapons/megaphone.png',
       weaponScale: 1.1,
       abilities: [
@@ -486,7 +490,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.dps,
       maxHp: 95,
       range: 470,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/acabo.png',
       weaponPath: 'assets/game/weapons/umbrella_cannon.png',
       weaponScale: 1.1,
       abilities: [
@@ -526,7 +530,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.dps,
       maxHp: 100,
       range: 540,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/arias.png',
       weaponPath: 'assets/game/weapons/sniper_rifle.png',
       weaponScale: 1.1,
       abilities: [
@@ -558,7 +562,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.tank,
       maxHp: 170,
       range: 420,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/baquirin.png',
       weaponPath: 'assets/game/weapons/shield.png',
       weaponScale: 1.1,
       abilities: [
@@ -583,7 +587,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.dps,
       maxHp: 95,
       range: 480,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/borromeo.png',
       weaponPath: 'assets/game/weapons/hoodie_blade.png',
       weaponScale: 1.1,
       abilities: [
@@ -622,8 +626,8 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.support,
       maxHp: 140,
       range: 430,
-      portrait: basePortrait,
-      weaponPath: 'assets/game/weapons/cheer_flag.png',
+      portrait: 'assets/game/classmates/casibua.png',
+      weaponPath: 'assets/game/weapons/piso.png',
       weaponScale: 1.0,
       abilities: [
         TowerAbility(
@@ -654,7 +658,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.dps,
       maxHp: 100,
       range: 470,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/cawaling.png',
       weaponPath: 'assets/game/weapons/laptop_turret.png',
       weaponScale: 1.0,
       abilities: [
@@ -686,7 +690,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.control,
       maxHp: 120,
       range: 450,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/gealone.png',
       weaponPath: 'assets/game/weapons/pillow_cloud.png',
       weaponScale: 1.0,
       abilities: [
@@ -711,7 +715,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.hybrid,
       maxHp: 115,
       range: 460,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/lavandero.png',
       weaponPath: 'assets/game/weapons/strat_board.png',
       weaponScale: 1.0,
       abilities: [
@@ -736,7 +740,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.control,
       maxHp: 115,
       range: 440,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/laudit.png',
       weaponPath: 'assets/game/weapons/camera_flash.png',
       weaponScale: 1.1,
       abilities: [
@@ -768,8 +772,8 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.dps,
       maxHp: 100,
       range: 460,
-      portrait: basePortrait,
-      weaponPath: 'assets/game/weapons/bomb_pillow.png',
+      portrait: 'assets/game/classmates/malong.png',
+      weaponPath: 'assets/game/weapons/pencil.png',
       weaponScale: 1.1,
       abilities: [
         TowerAbility(
@@ -807,7 +811,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.tank,
       maxHp: 190,
       range: 410,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/manilla.png',
       weaponPath: 'assets/game/weapons/gauntlet.png',
       weaponScale: 1.2,
       abilities: [
@@ -846,8 +850,8 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.dps,
       maxHp: 105,
       range: 460,
-      portrait: basePortrait,
-      weaponPath: 'assets/game/weapons/anime_staff.png',
+      portrait: 'assets/game/classmates/manjares.png',
+      weaponPath: 'assets/game/weapons/bear.png',
       weaponScale: 1.0,
       abilities: [
         TowerAbility(
@@ -879,8 +883,8 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.dps,
       maxHp: 100,
       range: 470,
-      portrait: basePortrait,
-      weaponPath: 'assets/game/weapons/controller_gun.png',
+      portrait: 'assets/game/classmates/paculanan.png',
+      weaponPath: 'assets/game/weapons/controller.png',
       weaponScale: 1.0,
       abilities: [
         TowerAbility(
@@ -911,8 +915,8 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.dps,
       maxHp: 105,
       range: 480,
-      portrait: basePortrait,
-      weaponPath: 'assets/game/weapons/railgun_notes.png',
+      portrait: 'assets/game/classmates/paras.png',
+      weaponPath: 'assets/game/weapons/arduino.png',
       weaponScale: 1.0,
       abilities: [
         TowerAbility(
@@ -943,8 +947,8 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.hybrid,
       maxHp: 110,
       range: 470,
-      portrait: basePortrait,
-      weaponPath: 'assets/game/weapons/bouncy_orb.png',
+      portrait: 'assets/game/classmates/porcopio.png',
+      weaponPath: 'assets/game/weapons/pickleball.png',
       weaponScale: 1.0,
       abilities: [
         TowerAbility(
@@ -975,8 +979,8 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.control,
       maxHp: 115,
       range: 450,
-      portrait: basePortrait,
-      weaponPath: 'assets/game/weapons/headphone_wave.png',
+      portrait: 'assets/game/classmates/riman.png',
+      weaponPath: 'assets/game/weapons/headphone.png',
       weaponScale: 1.1,
       abilities: [
         TowerAbility(
@@ -1014,7 +1018,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.dps,
       maxHp: 105,
       range: 470,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/rivero.png',
       weaponPath: 'assets/game/weapons/smirk_blade.png',
       weaponScale: 1.0,
       abilities: [
@@ -1046,8 +1050,8 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.dps,
       maxHp: 95,
       range: 470,
-      portrait: basePortrait,
-      weaponPath: 'assets/game/weapons/nerf_storm.png',
+      portrait: 'assets/game/classmates/tagab.png',
+      weaponPath: 'assets/game/weapons/happi.png',
       weaponScale: 1.0,
       abilities: [
         TowerAbility(
@@ -1078,7 +1082,7 @@ List<TowerType> buildTowerTypes() {
       towerClass: TowerClass.hybrid,
       maxHp: 110,
       range: 460,
-      portrait: basePortrait,
+      portrait: 'assets/game/classmates/trinidad.png',
       weaponPath: 'assets/game/weapons/cap_spinner.png',
       weaponScale: 1.0,
       abilities: [
@@ -1220,8 +1224,8 @@ class _GameScreenState extends State<GameScreen> {
           y: start.dy,
           hp: def.baseHp,
           maxHp: def.baseHp,
-          speed: def.speed,
-          bounty: def.bounty,
+        speed: def.speed * kEnemySpeedFactor,                     // 👈 slower miniboss
+        bounty: (def.bounty * kEnemyGoldFactor).round(),          // 👈 more gold
           type: EnemyType.miniboss,
           sprite: def.sprite,
         ),
@@ -1240,8 +1244,8 @@ class _GameScreenState extends State<GameScreen> {
         y: start.dy,
         hp: totalHp,
         maxHp: totalHp,
-        speed: def.speed,
-        bounty: def.bounty,
+        speed: def.speed * kEnemySpeedFactor,                     // 👈 slower miniboss
+        bounty: (def.bounty * kEnemyGoldFactor).round(),          // 👈 more gold
         type: type,
         sprite: def.sprite,
       ),
@@ -1449,7 +1453,7 @@ class _GameScreenState extends State<GameScreen> {
           break;
 
         case 'Slow Groove':
-          enemy.speed *= 0.6;
+          enemy.speed *= 0.3;
           break;
 
         case 'Bounce Shot':

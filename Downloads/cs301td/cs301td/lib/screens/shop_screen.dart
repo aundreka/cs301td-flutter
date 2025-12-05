@@ -80,20 +80,28 @@ class _ShopScreenState extends State<ShopScreen> {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final width = constraints.maxWidth;
+      int crossAxisCount;
+      double childAspectRatio;
 
-                // 🔹 Responsive grid so desktop cards don't become huge
-                int crossAxisCount;
-                if (width >= 1400) {
-                  crossAxisCount = 6;
-                } else if (width >= 1100) {
-                  crossAxisCount = 5;
-                } else if (width >= 900) {
-                  crossAxisCount = 4;
-                } else if (width >= 600) {
-                  crossAxisCount = 3;
-                } else {
-                  crossAxisCount = 2;
-                }
+               if (width >= 1400) {
+        crossAxisCount = 6;
+        childAspectRatio = 0.7;
+      } else if (width >= 1100) {
+        crossAxisCount = 5;
+        childAspectRatio = 0.7;
+      } else if (width >= 900) {
+        crossAxisCount = 4;
+        childAspectRatio = 0.72;
+      } else if (width >= 600) {
+        // Tablet-ish
+        crossAxisCount = 3;
+        childAspectRatio = 0.82;
+      } else {
+        // 📱 Mobile: 2 columns, but cards are shorter/smaller
+        crossAxisCount = 2;
+        childAspectRatio = 0.95; // try 1.0 if you want them even smaller
+      }
+
 
                 return GridView.builder(
                   padding: const EdgeInsets.symmetric(
@@ -105,7 +113,7 @@ class _ShopScreenState extends State<ShopScreen> {
                     crossAxisSpacing: 14,
                     mainAxisSpacing: 14,
                     // Similar card ratio on all devices
-                    childAspectRatio: 0.72,
+                    childAspectRatio: childAspectRatio,
                   ),
                   itemCount: filtered.length,
                   itemBuilder: (context, i) {
