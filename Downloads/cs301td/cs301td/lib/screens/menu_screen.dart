@@ -1,5 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/foundation.dart'; // kIsWeb
+import 'package:flutter/foundation.dart'; 
 import 'package:flutter/material.dart';
 import '../widgets/mute_button.dart';
 
@@ -27,12 +27,12 @@ class _MenuScreenState extends State<MenuScreen>
 
     _player = AudioPlayer()..setReleaseMode(ReleaseMode.loop);
 
-    // Autoplay for mobile/desktop only
+    
     if (!kIsWeb) {
       _initMusic();
     }
 
-    // Simple intro animation for title & subtitle
+    
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -104,12 +104,12 @@ class _MenuScreenState extends State<MenuScreen>
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () async {
-          // Web autoplay fix — starts music only after first click
+          
           if (kIsWeb && _player.state != PlayerState.playing) {
             await _initMusic();
           }
 
-          // Navigate to game
+          
           if (mounted) {
             Navigator.pushNamed(context, "/game");
           }
@@ -117,13 +117,13 @@ class _MenuScreenState extends State<MenuScreen>
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Background
+            
             Image.asset(
               "assets/menu/menu_bg.png",
               fit: BoxFit.cover,
             ),
 
-            // Title with animation
+            
             FadeTransition(
               opacity: _titleOpacity,
               child: SlideTransition(
@@ -135,7 +135,7 @@ class _MenuScreenState extends State<MenuScreen>
               ),
             ),
 
-            // Subtitle with animation
+            
             FadeTransition(
               opacity: _subtitleOpacity,
               child: SlideTransition(
@@ -147,17 +147,17 @@ class _MenuScreenState extends State<MenuScreen>
               ),
             ),
 
-            // Center caption
+            
             Center(
               child: Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.45),
+                  color: Colors.black.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
-                  "Click anywhere to start",
+                  "C L I C K   A N Y W H E R E   T O   S T A R T",
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 28,
@@ -174,7 +174,7 @@ class _MenuScreenState extends State<MenuScreen>
               ),
             ),
 
-            // Mute button
+            
             Positioned(
               top: 20,
               right: 20,

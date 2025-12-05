@@ -136,7 +136,7 @@ class _ShopScreenState extends State<ShopScreen> {
 
   // ───────────────── FILTER + SORT ─────────────────
 
-  List<TowerType> _filteredAndSortedTowers() {
+List<TowerType> _filteredAndSortedTowers() {
     final list = widget.allTowerTypes.where((t) {
       if (_rarityFilter != null && t.rarity != _rarityFilter) return false;
       if (_classFilter != null && t.towerClass != _classFilter) return false;
@@ -145,11 +145,11 @@ class _ShopScreenState extends State<ShopScreen> {
 
     int rarityRank(TowerRarity r) {
       switch (r) {
-        case TowerRarity.epic:
+        case TowerRarity.common:
           return 0;
         case TowerRarity.rare:
           return 1;
-        case TowerRarity.common:
+        case TowerRarity.epic:
           return 2;
       }
     }
@@ -353,7 +353,7 @@ class _ShopScreenState extends State<ShopScreen> {
 
 // ───────────────── TOWER CARD ─────────────────
 
-class _TowerCard extends StatelessWidget {
+class _TowerCard extends StatefulWidget {
   final TowerType tower;
   final bool affordable;
   final VoidCallback onTap;
@@ -365,21 +365,50 @@ class _TowerCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final rarityCol = rarityColor(tower.rarity);
-    final classCol = _classColor(tower.towerClass);
+  State<_TowerCard> createState() => _TowerCardState();
+}
 
-    // 🔹 Full-bleed image that *fills the entire card*
+class _TowerCardState extends State<_TowerCard> with SingleTickerProviderStateMixin {
+  late AnimationController _shimmerController;
+
+  @override
+  void initState() {
+    super.initState();
+    _shimmerController = AnimationController(
+      duration: const Duration(milliseconds: 2500),
+      vsync: this,
+    );
+    
+    // Only animate epic cards
+    if (widget.tower.rarity == TowerRarity.epic) {
+      _shimmerController.repeat();
+    }
+  }
+
+  @override
+  void dispose() {
+    _shimmerController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final rarityCol = rarityColor(widget.tower.rarity);
+    final classCol = _classColor(widget.tower.towerClass);
+    final isEpic = widget.tower.rarity == TowerRarity.epic;
+        final isRare = widget.tower.rarity == TowerRarity.rare;
+
+
     final cardContent = ClipRRect(
       borderRadius: BorderRadius.circular(18),
       child: Stack(
         children: [
-          // IMAGE as background filling the card
+          // IMAGE as background
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(tower.portrait),
+                  image: AssetImage(widget.tower.portrait),
                   fit: BoxFit.cover,
                   colorFilter: ColorFilter.mode(
                     Colors.black.withOpacity(0.35),
@@ -390,7 +419,7 @@ class _TowerCard extends StatelessWidget {
             ),
           ),
 
-          // Top gradient glow for flavor
+          // Top gradient glow
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -407,6 +436,144 @@ class _TowerCard extends StatelessWidget {
             ),
           ),
 
+          // 🌟 EPIC SHIMMER EFFECT
+     if (isEpic)
+  AnimatedBuilder(
+    animation: _shimmerController,
+    builder: (context, child) {
+      return Positioned.fill(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18),
+          child: Stack(
+            children: [
+              // Base holographic shimmer with color shift
+              ShaderMask(
+                shaderCallback: (bounds) {
+                  return LinearGradient(
+                    colors: [
+                      Colors.purple.withOpacity(0.3),
+                      Colors.blue.withOpacity(0.4),
+                      Colors.cyan.withOpacity(0.3),
+                      Colors.purple.withOpacity(0.3),
+                    ],
+                    stops: const [0.0, 0.33, 0.66, 1.0],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    transform: GradientRotation(
+                      _shimmerController.value * 6.28,
+                    ),
+                  ).createShader(bounds);
+                },
+                child: Container(color: Colors.white),
+              ),
+              
+              // Diagonal sweep shimmer
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment(
+                      -1.5 - _shimmerController.value * 3,
+                      -1.5 - _shimmerController.value * 3,
+                    ),
+                    end: Alignment(
+                      -0.5 - _shimmerController.value * 3,
+                      -0.5 - _shimmerController.value * 3,
+                    ),
+                    colors: [
+                      Colors.transparent,
+                      Colors.white.withOpacity(0.6),
+                      Colors.white.withOpacity(0.8),
+                      Colors.white.withOpacity(0.6),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.0, 0.35, 0.5, 0.65, 1.0],
+                  ),
+                ),
+              ),
+              
+              // Sparkle highlights - using LayoutBuilder to get dimensions
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  return Positioned(
+                    left: constraints.maxWidth * (0.2 + _shimmerController.value * 0.6),
+                    top: constraints.maxHeight * (0.15 + _shimmerController.value * 0.7),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            Colors.white.withOpacity(0.8 * (1 - _shimmerController.value)),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              
+              // Edge glow
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3 + _shimmerController.value * 0.2),
+                    width: 1.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  ),
+
+  if (isRare)
+  AnimatedBuilder(
+    animation: _shimmerController,
+    builder: (context, child) {
+      return Positioned.fill(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blue.withOpacity(0.15 + _shimmerController.value * 0.5),
+                  blurRadius: 8,
+                  spreadRadius: 0,
+                ),
+              ],
+              border: Border.all(
+                color: Colors.blue.withOpacity(0.2 + _shimmerController.value * 0.5),
+                width: 1,
+              ),
+            ),
+            child: ShaderMask(
+              shaderCallback: (bounds) {
+                return LinearGradient(
+                  colors: [
+                    Colors.transparent,
+                    Colors.white.withOpacity(0.15),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.3, 0.5, 0.7],
+                  begin: Alignment(-1.0 - _shimmerController.value * 2, 0.0),
+                  end: Alignment(1.0 + _shimmerController.value * 2, 0.0),
+                ).createShader(bounds);
+              },
+              child: Container(color: Colors.white),
+            ),
+          ),
+        ),
+      );
+    },
+  ),
+
           // Cost at top-right
           Positioned(
             right: 8,
@@ -418,7 +585,7 @@ class _TowerCard extends StatelessWidget {
                 color: Colors.black.withOpacity(0.75),
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: affordable ? Colors.amberAccent : Colors.redAccent,
+                  color: widget.affordable ? Colors.amberAccent : Colors.redAccent,
                   width: 1.4,
                 ),
               ),
@@ -427,12 +594,12 @@ class _TowerCard extends StatelessWidget {
                   Icon(
                     Icons.attach_money,
                     size: 14,
-                    color: affordable ? Colors.amberAccent : Colors.redAccent,
+                    color: widget.affordable ? Colors.amberAccent : Colors.redAccent,
                   ),
                   Text(
-                    '${tower.cost}',
+                    '${widget.tower.cost}',
                     style: TextStyle(
-                      color: affordable
+                      color: widget.affordable
                           ? Colors.amberAccent
                           : Colors.redAccent,
                       fontWeight: FontWeight.w700,
@@ -457,7 +624,7 @@ class _TowerCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                tower.name,
+                widget.tower.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
@@ -479,8 +646,8 @@ class _TowerCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _rarityChip(tower.rarity),
-                _classChip(tower.towerClass, classCol),
+                _rarityChip(widget.tower.rarity),
+                _classChip(widget.tower.towerClass, classCol),
               ],
             ),
           ),
@@ -489,13 +656,13 @@ class _TowerCard extends StatelessWidget {
     );
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: widget.onTap,
       child: AnimatedOpacity(
         duration: const Duration(milliseconds: 200),
-        opacity: affordable ? 1.0 : 0.55,
+        opacity: widget.affordable ? 1.0 : 0.55,
         child: ColorFiltered(
           // grayscale full card when unaffordable
-          colorFilter: affordable
+          colorFilter: widget.affordable
               ? const ColorFilter.mode(
                   Colors.transparent,
                   BlendMode.srcOver,
@@ -837,7 +1004,7 @@ class _TowerDetailSheet extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Row(
+                    child: Row(
                   children: [
                     Expanded(
                       child: ElevatedButton(
@@ -848,8 +1015,10 @@ class _TowerDetailSheet extends StatelessWidget {
                             : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
-                              affordable ? Colors.amberAccent : Colors.grey,
-                          foregroundColor: Colors.black,
+                              affordable ? Colors.amberAccent : Colors.grey.shade800,
+                          foregroundColor: affordable ? Colors.black : Colors.grey.shade600,
+                          disabledBackgroundColor: Colors.grey.shade800,
+                          disabledForegroundColor: Colors.grey.shade600,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
@@ -858,12 +1027,15 @@ class _TowerDetailSheet extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.shopping_cart_outlined, size: 18),
+                            Icon(
+                              affordable ? Icons.shopping_cart_outlined : Icons.lock_outline,
+                              size: 18,
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               affordable
-                                  ? 'Buy for ${tower.cost}'
-                                  : 'Need ${tower.cost - currentMoney} more',
+                                  ? 'Buy for \$${tower.cost}'
+                                  : 'Need \$${tower.cost - currentMoney} more',
                               style: const TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 13,
@@ -875,6 +1047,8 @@ class _TowerDetailSheet extends StatelessWidget {
                     ),
                   ],
                 ),
+      
+                
               ),
             ],
           ),

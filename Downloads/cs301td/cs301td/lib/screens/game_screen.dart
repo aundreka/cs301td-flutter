@@ -8,10 +8,10 @@ import 'tower_upgrade_screen.dart';
 const double kWorldWidth = 1280;
 const double kWorldHeight = 720;
 
-// Global owned towers list (used by shop / upgrade etc.)
+
 List<TowerInstance> ownedTowers = [];
 
-/// Enemy path — bottom-left to zigzag exit
+
 final List<Offset> kPathPoints = [
   const Offset(80, kWorldHeight - 80),
   const Offset(80, 140),
@@ -26,7 +26,7 @@ enum TowerRarity { common, rare, epic }
 
 enum TowerClass { dps, tank, support, control, hybrid }
 
-// Enemy Types
+
 enum EnemyType { book, laptop, exam, bee, miniboss }
 
 
@@ -47,7 +47,7 @@ class TowerAbility {
   final String name;
   final String description;
 
-  /// Generic numeric “power” used by UI (e.g., +damage %, slow %, etc.)
+  
   final double baseValue;
   final double perEvolution;
 
@@ -65,9 +65,9 @@ class TowerAbility {
   }
 }
 
-/// ===========================================
-/// TOWER TYPE MODEL
-/// ===========================================
+
+
+
 class TowerType {
   final String id;
   final String name;
@@ -75,25 +75,25 @@ class TowerType {
 
   final int cost;
   final double baseDamage;
-  final double baseFireRate; // seconds between shots
+  final double baseFireRate; 
   final TowerRarity rarity;
   final TowerClass towerClass;
   final double maxHp;
   final double range;
 
-  /// Sprite for the classmate
+  
   final String portrait;
 
-  /// Sprite for the weapon/projectile
+  
   final String weaponPath;
 
-  /// Base visual scale for the weapon (upgrade screen can multiply this)
+  
   final double weaponScale;
 
-  /// Skills (1 for common, 2 rare, 3 epic)
+  
   final List<TowerAbility> abilities;
 
-  /// Evolution (1–3). This is mutated at runtime.
+  
   int evolutionLevel;
   final int maxEvolution;
 
@@ -116,22 +116,22 @@ class TowerType {
     this.maxEvolution = 3,
   });
 
-  /// Computed damage based on evolution
+  
   double get scaledDamage {
-    // +25% damage per evolution level above 1
+    
     final bonusFactor = 1.0 + 0.25 * (evolutionLevel - 1);
     return baseDamage * bonusFactor;
   }
 
-  /// Computed fire rate (seconds between shots) based on evolution
+  
   double get scaledFireRate {
-    // Slightly faster at higher evolutions (lower cooldown)
+    
     final factor = 1.0 - 0.15 * (evolutionLevel - 1);
-    final clampedFactor = max(0.6, factor); // don’t go too crazy fast
+    final clampedFactor = max(0.6, factor); 
     return baseFireRate * clampedFactor;
   }
 
-  /// Optional: scaled range if you ever need it
+  
   double get scaledRange {
     return range * (1.0 + 0.1 * (evolutionLevel - 1));
   }
@@ -152,15 +152,15 @@ class EnemyDefinition {
     this.flying = false,
   });
 }
-const double kEnemySpeedFactor = 0.65;   // < 1.0 = slower
-const double kEnemyGoldFactor  = 1.7;    // > 1.0 = more gold
+const double kEnemySpeedFactor = 1.1;   
+const double kEnemyGoldFactor  = 1.9;    
 
 
 const Map<EnemyType, EnemyDefinition> enemyDefs = {
   EnemyType.book: EnemyDefinition(
     sprite: 'assets/game/enemies/book.png',
     baseHp: 60,
-    speed: 80,
+    speed: 50,
     bounty: 10,
   ),
   EnemyType.laptop: EnemyDefinition(
@@ -172,35 +172,35 @@ const Map<EnemyType, EnemyDefinition> enemyDefs = {
   EnemyType.exam: EnemyDefinition(
     sprite: 'assets/game/enemies/arcell.png',
     baseHp: 40,
-    speed: 140,
+    speed: 80,
     bounty: 15,
   ),
   EnemyType.bee: EnemyDefinition(
     sprite: 'assets/game/enemies/matel.png',
-    baseHp: 50,
-    speed: 120,
+    baseHp: 200,
+    speed: 60,
     bounty: 12,
     flying: true,
   ),
 };
 
-/// Miniboss definitions (professors)
+
 const Map<String, EnemyDefinition> minibossDefs = {
   "caballar": EnemyDefinition(
-    sprite: 'assets/game/enemies/sean.png',
-    baseHp: 800,
-    speed: 50,
-    bounty: 200,
+    sprite: 'assets/game/enemies/paola.png',
+    baseHp: 1770,
+    speed: 80,
+    bounty: 1000,
   ),
   "primo": EnemyDefinition(
     sprite: 'assets/game/enemies/peren.png',
-    baseHp: 650,
+    baseHp: 2650,
     speed: 70,
     bounty: 160,
   ),
   "lontoc": EnemyDefinition(
-    sprite: 'assets/game/enemies/paola.png',
-    baseHp: 900,
+    sprite: 'assets/game/enemies/sean.png',
+    baseHp: 3900,
     speed: 40,
     bounty: 250,
   ),
@@ -209,11 +209,11 @@ const Map<String, EnemyDefinition> minibossDefs = {
 Color rarityColor(TowerRarity rarity) {
   switch (rarity) {
     case TowerRarity.common:
-      return const Color(0xFF7F8C8D); // gray
+      return const Color(0xFF7F8C8D); 
     case TowerRarity.rare:
-      return const Color(0xFF3498DB); // blue
+      return const Color(0xFF3498DB); 
     case TowerRarity.epic:
-      return const Color(0xFFE67E22); // orange-gold
+      return const Color(0xFFE67E22); 
   }
 }
 
@@ -221,9 +221,9 @@ List<TowerType> buildTowerTypes() {
   const basePortrait = 'assets/game/classmates/sample.png';
 
   return [
-    // ==========================
-    // GIRLS
-    // ==========================
+    
+    
+    
     TowerType(
       id: 'abante',
       name: 'Abante, Marjinel',
@@ -231,7 +231,7 @@ List<TowerType> buildTowerTypes() {
       cost: 100,
       baseDamage: 18,
       baseFireRate: 0.7,
-      rarity: TowerRarity.rare,
+      rarity: TowerRarity.common,
       towerClass: TowerClass.dps,
       maxHp: 90,
       range: 480,
@@ -260,10 +260,10 @@ List<TowerType> buildTowerTypes() {
       id: 'chan',
       name: 'Chan, Rebekah',
       description: 'Creative balanced caster. Reliable single-target.',
-      cost: 110,
-      baseDamage: 20,
+      cost: 310,
+      baseDamage: 40,
       baseFireRate: 1.0,
-      rarity: TowerRarity.common,
+      rarity: TowerRarity.rare,
       towerClass: TowerClass.hybrid,
       maxHp: 110,
       range: 460,
@@ -285,10 +285,10 @@ List<TowerType> buildTowerTypes() {
       id: 'domingo',
       name: 'Domingo, Vashti',
       description: 'Organized planner. Precise lane control tower.',
-      cost: 115,
-      baseDamage: 22,
+      cost: 385,
+      baseDamage: 36,
       baseFireRate: 1.1,
-      rarity: TowerRarity.common,
+      rarity: TowerRarity.rare,
       towerClass: TowerClass.control,
       maxHp: 100,
       range: 500,
@@ -311,7 +311,7 @@ List<TowerType> buildTowerTypes() {
       id: 'perez',
       name: 'Perez, Clarinze',
       description: 'Competitive prodigy. High DPS crit-style tower.',
-      cost: 140,
+      cost: 500,
       baseDamage: 30,
       baseFireRate: 1.3,
       rarity: TowerRarity.epic,
@@ -351,7 +351,7 @@ List<TowerType> buildTowerTypes() {
       id: 'peruda',
       name: 'Peruda, Zenia',
       description: 'Observant slow/control tower. Great mid-lane control.',
-      cost: 130,
+      cost: 230,
       baseDamage: 18,
       baseFireRate: 0.9,
       rarity: TowerRarity.rare,
@@ -409,7 +409,7 @@ List<TowerType> buildTowerTypes() {
       id: 'yahiya',
       name: 'Yahiya, Merhaya',
       description: 'Fangirl shock tower. Short-range control damage.',
-      cost: 150,
+      cost: 250,
       baseDamage: 24,
       baseFireRate: 1.0,
       rarity: TowerRarity.rare,
@@ -441,7 +441,7 @@ List<TowerType> buildTowerTypes() {
       id: 'mapanao',
       name: 'Mapanao, Issa',
       description: 'Leader aura-type support. Buff-focused hybrid.',
-      cost: 160,
+      cost: 450,
       baseDamage: 20,
       baseFireRate: 1.0,
       rarity: TowerRarity.epic,
@@ -476,14 +476,14 @@ List<TowerType> buildTowerTypes() {
       ],
     ),
 
-    // ==========================
-    // BOYS
-    // ==========================
+    
+    
+    
     TowerType(
       id: 'acabo',
       name: 'Acabo, Ian',
       description: 'Burst DPS. “Pasabi” style multi-shot damage.',
-      cost: 150,
+      cost: 650,
       baseDamage: 28,
       baseFireRate: 1.0,
       rarity: TowerRarity.epic,
@@ -526,7 +526,7 @@ List<TowerType> buildTowerTypes() {
       cost: 135,
       baseDamage: 22,
       baseFireRate: 0.8,
-      rarity: TowerRarity.rare,
+      rarity: TowerRarity.common,
       towerClass: TowerClass.dps,
       maxHp: 100,
       range: 540,
@@ -580,10 +580,10 @@ List<TowerType> buildTowerTypes() {
       id: 'borromeo',
       name: 'Borromeo, Frank',
       description: 'Secretive crit DPS. High burst potential.',
-      cost: 170,
-      baseDamage: 32,
+      cost: 580,
+      baseDamage: 12,
       baseFireRate: 1.2,
-      rarity: TowerRarity.epic,
+      rarity: TowerRarity.common,
       towerClass: TowerClass.dps,
       maxHp: 95,
       range: 480,
@@ -619,10 +619,10 @@ List<TowerType> buildTowerTypes() {
       id: 'casibua',
       name: 'Casibua, Joevin',
       description: 'Support buffer. Boosts nearby damage.',
-      cost: 140,
+      cost: 240,
       baseDamage: 16,
       baseFireRate: 1.4,
-      rarity: TowerRarity.rare,
+      rarity: TowerRarity.common,
       towerClass: TowerClass.support,
       maxHp: 140,
       range: 430,
@@ -654,7 +654,7 @@ List<TowerType> buildTowerTypes() {
       cost: 130,
       baseDamage: 19,
       baseFireRate: 0.7,
-      rarity: TowerRarity.rare,
+      rarity: TowerRarity.common,
       towerClass: TowerClass.dps,
       maxHp: 100,
       range: 470,
@@ -733,7 +733,7 @@ List<TowerType> buildTowerTypes() {
       id: 'laudit',
       name: 'Laudit, Dan Renzo',
       description: 'Flash photographer. Control + utility.',
-      cost: 145,
+      cost: 345,
       baseDamage: 17,
       baseFireRate: 1.0,
       rarity: TowerRarity.rare,
@@ -765,10 +765,10 @@ List<TowerType> buildTowerTypes() {
       id: 'malong',
       name: 'Malong, Reinier',
       description: 'Sleepy explosive DPS. Random big hits.',
-      cost: 150,
+      cost: 430,
       baseDamage: 25,
       baseFireRate: 1.3,
-      rarity: TowerRarity.epic,
+      rarity: TowerRarity.rare,
       towerClass: TowerClass.dps,
       maxHp: 100,
       range: 460,
@@ -804,8 +804,8 @@ List<TowerType> buildTowerTypes() {
       id: 'manilla',
       name: 'Manilla, Ben',
       description: 'Muscle tank. Splash damage/tank hybrid.',
-      cost: 180,
-      baseDamage: 40,
+      cost: 870,
+      baseDamage: 110,
       baseFireRate: 1.5,
       rarity: TowerRarity.epic,
       towerClass: TowerClass.tank,
@@ -842,12 +842,12 @@ List<TowerType> buildTowerTypes() {
     TowerType(
       id: 'manjares',
       name: 'Manjares, Cedrick',
-      description: 'Geek DPS. Bonus vs minibosses.',
-      cost: 160,
+      description: 'Geek Control Unit. Bonus vs minibosses.',
+      cost: 360,
       baseDamage: 26,
       baseFireRate: 1.1,
       rarity: TowerRarity.rare,
-      towerClass: TowerClass.dps,
+      towerClass: TowerClass.control,
       maxHp: 105,
       range: 460,
       portrait: 'assets/game/classmates/manjares.png',
@@ -879,7 +879,7 @@ List<TowerType> buildTowerTypes() {
       cost: 150,
       baseDamage: 16,
       baseFireRate: 0.5,
-      rarity: TowerRarity.rare,
+      rarity: TowerRarity.common,
       towerClass: TowerClass.dps,
       maxHp: 100,
       range: 470,
@@ -908,7 +908,7 @@ List<TowerType> buildTowerTypes() {
       id: 'paras',
       name: 'Paras, Kurt Lance',
       description: 'Smart armor-piercing DPS.',
-      cost: 155,
+      cost: 355,
       baseDamage: 22,
       baseFireRate: 0.9,
       rarity: TowerRarity.rare,
@@ -943,7 +943,7 @@ List<TowerType> buildTowerTypes() {
       cost: 150,
       baseDamage: 20,
       baseFireRate: 1.0,
-      rarity: TowerRarity.rare,
+      rarity: TowerRarity.common,
       towerClass: TowerClass.hybrid,
       maxHp: 110,
       range: 470,
@@ -972,7 +972,7 @@ List<TowerType> buildTowerTypes() {
       id: 'riman',
       name: 'Riman, Tyron',
       description: 'Music-based AOE/control caster.',
-      cost: 170,
+      cost: 490,
       baseDamage: 30,
       baseFireRate: 1.4,
       rarity: TowerRarity.epic,
@@ -1011,7 +1011,7 @@ List<TowerType> buildTowerTypes() {
       id: 'rivero',
       name: 'Rivero, Dan Justin',
       description: 'Sarcastic high-crit DPS.',
-      cost: 160,
+      cost: 360,
       baseDamage: 28,
       baseFireRate: 1.3,
       rarity: TowerRarity.rare,
@@ -1043,10 +1043,10 @@ List<TowerType> buildTowerTypes() {
       id: 'tagab',
       name: 'Tagab, Mark',
       description: 'Hyper fast shooter. Insane fire rate.',
-      cost: 145,
+      cost: 95,
       baseDamage: 14,
       baseFireRate: 0.4,
-      rarity: TowerRarity.rare,
+      rarity: TowerRarity.common,
       towerClass: TowerClass.dps,
       maxHp: 95,
       range: 470,
@@ -1113,30 +1113,30 @@ class _GameScreenState extends State<GameScreen> {
 
   final List<InventoryItem> inventory = [];
 
-  // floating damage numbers
+  
   final List<DamageText> damageTexts = [];
   final Set<int> _hoveredTowers = {};
   late List<TowerType> towerTypes;
   late Timer loop;
 
   int lives = 20;
-  int money = 160;
+  int money = 2400;
 
   static const double bottomBarHeight = 130;
 
-  // Waves
-  int wave = 1;
-  final int maxWaves = 25;
+  
+  int wave = 9;
+  final int maxWaves = 10;
   bool spawning = false;
   int enemiesToSpawn = 0;
   double spawnCooldown = 0;
 
-  // Miniboss victory
+  
   int minibossesKilled = 0;
   bool won = false;
 
-  // NEW: Game over flag
-  bool gameOver = false; // NEW
+  
+  bool gameOver = false; 
 
   @override
   void initState() {
@@ -1153,11 +1153,11 @@ class _GameScreenState extends State<GameScreen> {
     super.dispose();
   }
 
-  // =========================================
-  // GAME LOOP + ABILITY EFFECTS
-  // =========================================
+  
+  
+  
   void updateGame(double dt) {
-    if (won || gameOver) return; // NEW: stop updating when game is over
+    if (won || gameOver) return; 
 
     if (!spawning && enemies.isEmpty && wave <= maxWaves) {
       startWave(wave);
@@ -1175,7 +1175,7 @@ class _GameScreenState extends State<GameScreen> {
 
     moveEnemies(dt);
 
-    // NEW: Check if lives reached 0 → game over
+    
     if (lives <= 0 && !gameOver) {
       setState(() {
         lives = 0;
@@ -1192,8 +1192,8 @@ class _GameScreenState extends State<GameScreen> {
     projectiles.removeWhere((p) => !p.active);
     damageTexts.removeWhere((d) => d.life <= 0);
 
-// WIN CONDITION:
-    // if we've gone past the last wave AND there are no enemies AND nothing is spawning
+
+    
     if (!won && wave > maxWaves && enemies.isEmpty && !spawning) {
       setState(() {
         won = true;
@@ -1224,8 +1224,8 @@ class _GameScreenState extends State<GameScreen> {
           y: start.dy,
           hp: def.baseHp,
           maxHp: def.baseHp,
-        speed: def.speed * kEnemySpeedFactor,                     // 👈 slower miniboss
-        bounty: (def.bounty * kEnemyGoldFactor).round(),          // 👈 more gold
+        speed: def.speed * kEnemySpeedFactor,                     
+        bounty: (def.bounty * kEnemyGoldFactor).round(),          
           type: EnemyType.miniboss,
           sprite: def.sprite,
         ),
@@ -1244,8 +1244,8 @@ class _GameScreenState extends State<GameScreen> {
         y: start.dy,
         hp: totalHp,
         maxHp: totalHp,
-        speed: def.speed * kEnemySpeedFactor,                     // 👈 slower miniboss
-        bounty: (def.bounty * kEnemyGoldFactor).round(),          // 👈 more gold
+        speed: def.speed * kEnemySpeedFactor,                     
+        bounty: (def.bounty * kEnemyGoldFactor).round(),          
         type: type,
         sprite: def.sprite,
       ),
@@ -1254,9 +1254,9 @@ class _GameScreenState extends State<GameScreen> {
     if (enemiesToSpawn == 1 && wave < maxWaves) wave++;
   }
 
-  // ========================
-  // ENEMY MOVEMENT
-  // ========================
+  
+  
+  
   void moveEnemies(double dt) {
     for (var e in enemies) {
       if (e.dead || e.reachedEnd) continue;
@@ -1286,9 +1286,9 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
-  // ========================
-  // TOWER ATTACK LOGIC + ABILITIES
-  // ========================
+  
+  
+  
   void runTowers(double dt) {
     for (var t in towers) {
       t.cooldown -= dt;
@@ -1326,12 +1326,12 @@ class _GameScreenState extends State<GameScreen> {
   void fireProjectile(Tower tower, Enemy target) {
     double damage = tower.type.scaledDamage;
 
-    // ===============================
-    // APPLY PERSONALIZED ABILITIES
-    // (names here are just examples;
-    // your actual tower abilities use
-    // different names but this is harmless)
-    // ===============================
+    
+    
+    
+    
+    
+    
     for (var ab in tower.type.abilities) {
       switch (ab.name) {
         case 'Ink Strike':
@@ -1348,7 +1348,7 @@ class _GameScreenState extends State<GameScreen> {
           break;
 
         case 'Crimson Cleave':
-          // AOE slash; handled on hit
+          
           break;
 
         case 'Battle Focus':
@@ -1365,15 +1365,15 @@ class _GameScreenState extends State<GameScreen> {
           break;
 
         case 'Slow Groove':
-          // applied on hit
+          
           break;
 
         case 'Bounce Shot':
-          // handled on projectile collision
+          
           break;
 
         case 'Rhythm Chain':
-          // chain attack in projectile
+          
           break;
       }
     }
@@ -1389,9 +1389,9 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  // ========================
-  // PROJECTILE MOVEMENT
-  // ========================
+  
+  
+  
   void moveProjectiles(double dt) {
     for (var p in projectiles) {
       if (!p.active) continue;
@@ -1414,16 +1414,16 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
-  // ========================
-  // APPLY DAMAGE + AOE + CHAIN + SLOW, ETC.
-  // ========================
+  
+  
+  
   void hitEnemy(Projectile p) {
     final t = p.type;
     final enemy = p.target;
 
     enemy.hp -= p.damage;
 
-    // floating damage text
+    
     damageTexts.add(
       DamageText(
         x: enemy.x,
@@ -1441,7 +1441,7 @@ class _GameScreenState extends State<GameScreen> {
       }
     }
 
-    // Apply special ability effects
+    
     for (var ab in t.abilities) {
       switch (ab.name) {
         case 'Crimson Cleave':
@@ -1453,7 +1453,7 @@ class _GameScreenState extends State<GameScreen> {
           break;
 
         case 'Slow Groove':
-          enemy.speed *= 0.3;
+          enemy.speed *= 0.4;
           break;
 
         case 'Bounce Shot':
@@ -1496,12 +1496,12 @@ class _GameScreenState extends State<GameScreen> {
 
   void _updateDamageTexts(double dt) {
     for (var d in damageTexts) {
-      d.y -= 40 * dt; // float upwards
+      d.y -= 40 * dt; 
       d.life -= dt;
     }
   }
 
-  // NEW: reset everything when Try Again is pressed
+  
   void _resetGame() {
     setState(() {
       lives = 20;
@@ -1521,14 +1521,14 @@ class _GameScreenState extends State<GameScreen> {
       inventory.clear();
       ownedTowers.clear();
 
-      // fresh tower stats
+      
       towerTypes = buildTowerTypes();
     });
   }
 
-  // ========================
-  // UI + MAP RENDERING
-  // ========================
+  
+  
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1544,7 +1544,7 @@ class _GameScreenState extends State<GameScreen> {
 
           return Stack(
             children: [
-              // GAME AREA (DragTarget + tap to open upgrade)
+              
               Positioned(
                 left: 0,
                 right: 0,
@@ -1559,7 +1559,7 @@ class _GameScreenState extends State<GameScreen> {
                           _handleTowerTap(details, scaleX, scaleY),
                       child: Stack(
                         children: [
-                          // MAP BACKGROUND
+                          
                           Positioned.fill(
                             child: Image.asset(
                               'assets/maps/level1.png',
@@ -1567,11 +1567,11 @@ class _GameScreenState extends State<GameScreen> {
                             ),
                           ),
 
-                          // ENEMIES + HP BARS
+                          
                           ...enemies.map((e) {
                             final isBoss = e.type == EnemyType.miniboss;
-                            final spriteSize = isBoss ? 96.0 : 50.0;
-                            final barWidth = isBoss ? 80.0 : 40.0;
+                            final spriteSize = isBoss ? 140.0 : 80.0;
+                            final barWidth = isBoss ? 120.0 : 70.0;
                             final hpFrac = (e.hp / e.maxHp)
                                 .clamp(0.0, 1.0)
                                 .toDouble();
@@ -1581,7 +1581,7 @@ class _GameScreenState extends State<GameScreen> {
                               top: e.y * scaleY - spriteSize / 2 - 14,
                               child: Column(
                                 children: [
-                                  // HP BAR
+                                  
                                   SizedBox(
                                     width: barWidth,
                                     height: 6,
@@ -1600,21 +1600,21 @@ class _GameScreenState extends State<GameScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 2),
-                                  // ENEMY SPRITE
+                                  
                                   Image.asset(e.sprite, width: spriteSize),
                                 ],
                               ),
                             );
                           }).toList(),
 
-                          // TOWERS WITH EVO BORDER + BIGGER WEAPON
+                          
                           ...towers.map((t) {
                             final id = t.hashCode;
                             final isHovered = _hoveredTowers.contains(id);
                             final rarityCol = rarityColor(t.type.rarity);
                             return Positioned(
-                              left: t.x * scaleX - 35,
-                              top: t.y * scaleY - 55,
+                              left: t.x * scaleX - 25,
+                              top: t.y * scaleY - 45,
                               child: MouseRegion(
                                 cursor: SystemMouseCursors.click,
                                 onEnter: (_) {
@@ -1653,7 +1653,7 @@ class _GameScreenState extends State<GameScreen> {
                             );
                           }).toList(),
 
-                          // PROJECTILES
+                          
                           ...projectiles.map((p) {
                             final evo = p.type.evolutionLevel;
                             final evoWeaponScale =
@@ -1669,7 +1669,7 @@ class _GameScreenState extends State<GameScreen> {
                             );
                           }).toList(),
 
-                          // DAMAGE TEXTS
+                          
                           ...damageTexts.map((d) {
                             final alpha = (d.life / d.maxLife)
                                 .clamp(0.0, 1.0)
@@ -1702,30 +1702,30 @@ class _GameScreenState extends State<GameScreen> {
                     );
                   },
                   onAcceptWithDetails: (details) {
-                    final item = details.data; // InventoryItem
+                    final item = details.data; 
 
-                    // Convert global screen pos → local pos inside this game area
+                    
                     final box = context.findRenderObject() as RenderBox;
                     final localPos = box.globalToLocal(details.offset);
 
-                    // Local (0..width, 0..gameH) → world coords
+                    
                     final worldX = localPos.dx / scaleX;
                     final worldY = localPos.dy / scaleY;
 
                     setState(() {
                       towers.add(Tower(x: worldX, y: worldY, type: item.type));
 
-                      // Optional: remove one copy from inventory when used
+                      
                       inventory.remove(item);
                     });
                   },
                 ),
               ),
 
-              // BOTTOM BAR — Inventory + Shop
+              
               _buildBottomBar(),
 
-              // HUD — lives, money
+              
               Positioned(
                 right: 16,
                 top: 16,
@@ -1753,7 +1753,7 @@ class _GameScreenState extends State<GameScreen> {
                 ),
               ),
 
-              // Wave Display
+              
               Positioned(
                 left: 16,
                 top: 16,
@@ -1767,8 +1767,8 @@ class _GameScreenState extends State<GameScreen> {
                 ),
               ),
 
-              // NEW: GAME OVER OVERLAY
-              // NEW: GAME OVER OVERLAY
+              
+              
               if (gameOver)
                 Positioned.fill(
                   child: Container(
@@ -1833,7 +1833,7 @@ class _GameScreenState extends State<GameScreen> {
                   ),
                 ),
 
-              // NEW: YOU WIN OVERLAY
+              
               if (won)
                 Positioned.fill(
                   child: Container(
@@ -1905,7 +1905,7 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  // Fancy tower rendering with evolution border + bigger weapon
+  
   Widget _buildTowerOnMap(Tower t) {
     final evo = t.type.evolutionLevel.clamp(1, 3);
     final rarityCol = rarityColor(t.type.rarity);
@@ -1990,7 +1990,7 @@ class _GameScreenState extends State<GameScreen> {
           towerType: t.type,
           money: money,
           onUpgrade: () {
-            setState(() {}); // refresh UI after upgrading
+            setState(() {}); 
           },
           spendMoney: (amt) {
             setState(() {
@@ -2002,16 +2002,16 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  // ===========================================
-  // HANDLE TOWER TAP → OPEN UPGRADE SCREEN
-  // ===========================================
+  
+  
+  
   void _handleTowerTap(TapUpDetails details, double sx, double sy) {
     final tapX = details.localPosition.dx / sx;
     final tapY = details.localPosition.dy / sy;
 
     debugPrint('tap local=${details.localPosition} -> world=($tapX,$tapY)');
 
-    // Slightly larger hitbox to make tapping easier
+    
     const hitX = 50.0;
     const hitY = 80.0;
     for (var t in towers) {
@@ -2039,9 +2039,9 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
-  // ===========================================
-  // BOTTOM BAR
-  // ===========================================
+  
+  
+  
   Widget _buildBottomBar() {
     return Positioned(
       left: 0,
@@ -2097,13 +2097,13 @@ class _GameScreenState extends State<GameScreen> {
       ),
     );
 
-    // If player didn't buy anything, exit
+    
     if (selected == null) return;
 
-    // selected is a TowerType
+    
     final TowerType type = selected;
 
-    // Check money
+    
     if (money < type.cost) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Not enough ₱ to buy this tower.")),
@@ -2118,7 +2118,7 @@ class _GameScreenState extends State<GameScreen> {
         TowerInstance(type: type, evolutionLevel: 1, currentHp: type.maxHp),
       );
 
-      // OPTIONAL: if you want to see them in the bar:
+      
       inventory.add(InventoryItem(id: type.id, type: type));
     });
 
@@ -2154,9 +2154,9 @@ class _GameScreenState extends State<GameScreen> {
   }
 }
 
-// =======================================================
-// DATA MODELS
-// =======================================================
+
+
+
 class InventoryItem {
   final String id;
   final TowerType type;
@@ -2186,6 +2186,10 @@ class Enemy {
   bool reachedEnd = false;
   int waypoint = 0;
 
+  double slowDuration = 0;
+  double slowStrength = 1.0; 
+  double stunDuration = 0;
+
   Enemy({
     required this.x,
     required this.y,
@@ -2196,6 +2200,11 @@ class Enemy {
     required this.type,
     required this.sprite,
   });
+
+  double get effectiveSpeed {
+    if (stunDuration > 0) return 0; 
+    return speed * slowStrength;
+  }
 }
 
 class Projectile {
