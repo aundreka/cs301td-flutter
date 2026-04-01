@@ -1118,6 +1118,7 @@ class _GameScreenState extends State<GameScreen> {
   final Set<int> _hoveredTowers = {};
   late List<TowerType> towerTypes;
   late Timer loop;
+  bool _assetsPrecached = false;
 
   int lives = 20;
   int money = 2400;
@@ -1125,7 +1126,7 @@ class _GameScreenState extends State<GameScreen> {
   static const double bottomBarHeight = 130;
 
   
-  int wave = 9;
+  int wave = 1;
   final int maxWaves = 10;
   bool spawning = false;
   int enemiesToSpawn = 0;
@@ -1151,6 +1152,33 @@ class _GameScreenState extends State<GameScreen> {
   void dispose() {
     loop.cancel();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_assetsPrecached) {
+      _assetsPrecached = true;
+      _precacheAssets();
+    }
+  }
+
+  void _precacheAssets() {
+    final assetPaths = <String>{'assets/maps/level1.png'};
+    for (final type in towerTypes) {
+      assetPaths.add(type.portrait);
+      assetPaths.add(type.weaponPath);
+    }
+    for (final def in enemyDefs.values) {
+      assetPaths.add(def.sprite);
+    }
+    for (final def in minibossDefs.values) {
+      assetPaths.add(def.sprite);
+    }
+
+    for (final path in assetPaths) {
+      precacheImage(AssetImage(path), context);
+    }
   }
 
   
@@ -1561,9 +1589,12 @@ class _GameScreenState extends State<GameScreen> {
                         children: [
                           
                           Positioned.fill(
-                            child: Image.asset(
+                            child: _cachedAssetImage(
                               'assets/maps/level1.png',
+                              width: sw,
+                              height: gameH,
                               fit: BoxFit.cover,
+                              quality: FilterQuality.medium,
                             ),
                           ),
 
@@ -1601,7 +1632,11 @@ class _GameScreenState extends State<GameScreen> {
                                   ),
                                   const SizedBox(height: 2),
                                   
-                                  Image.asset(e.sprite, width: spriteSize),
+                                  _cachedAssetImage(
+                                    e.sprite,
+                                    width: spriteSize,
+                                    quality: FilterQuality.low,
+                                  ),
                                 ],
                               ),
                             );
@@ -1662,9 +1697,10 @@ class _GameScreenState extends State<GameScreen> {
                             return Positioned(
                               left: p.x * scaleX - 10,
                               top: p.y * scaleY - 10,
-                              child: Image.asset(
+                              child: _cachedAssetImage(
                                 p.type.weaponPath,
                                 width: 20 * evoWeaponScale,
+                                quality: FilterQuality.low,
                               ),
                             );
                           }).toList(),
@@ -1953,7 +1989,7 @@ class _GameScreenState extends State<GameScreen> {
                 border: Border.all(color: borderColor, width: borderWidth),
                 boxShadow: shadows,
               ),
-              child: Image.asset(t.type.portrait, width: 70),
+              child: _cachedAssetImage(t.type.portrait, width: 70),
             ),
             Positioned(
               bottom: 0,
@@ -1977,8 +2013,37 @@ class _GameScreenState extends State<GameScreen> {
           ],
         ),
         const SizedBox(height: 4),
-        Image.asset(t.type.weaponPath, width: 40 * evoWeaponScale),
+        _cachedAssetImage(
+          t.type.weaponPath,
+          width: 40 * evoWeaponScale,
+          quality: FilterQuality.low,
+        ),
       ],
+    );
+  }
+
+  int? _cacheDimension(double? size, double ratio) {
+    if (size == null) return null;
+    return (size * ratio).clamp(1.0, 4096.0).toInt();
+  }
+
+  Widget _cachedAssetImage(
+    String assetPath, {
+    double? width,
+    double? height,
+    BoxFit? fit,
+    FilterQuality quality = FilterQuality.low,
+  }) {
+    final ratio = MediaQuery.of(context).devicePixelRatio;
+    return Image.asset(
+      assetPath,
+      width: width,
+      height: height,
+      fit: fit,
+      cacheWidth: _cacheDimension(width, ratio),
+      cacheHeight: _cacheDimension(height, ratio),
+      filterQuality: quality,
+      gaplessPlayback: true,
     );
   }
 
@@ -2142,7 +2207,11 @@ class _GameScreenState extends State<GameScreen> {
       ),
       child: Column(
         children: [
-          Image.asset(t.portrait, width: 40),
+          _cachedAssetImage(
+            t.portrait,
+            width: 40,
+            quality: FilterQuality.low,
+          ),
           const SizedBox(height: 4),
           Text(
             t.name.split(',').first,
